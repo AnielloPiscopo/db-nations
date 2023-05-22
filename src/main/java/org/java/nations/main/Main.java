@@ -7,22 +7,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+import org.java.nations.helper.*;
+
 public class Main {
-	public static void main(String[] args) {
-		final String DB_URL = "jdbc:mysql://localhost:3306/nations";
-		final String DB_USER = "root";
-		final String DB_PASSWORD = "12345";
-		
+	private Main() {
+		run();
+	}
+	
+	private void run() {
 		try(Scanner sc = new Scanner(System.in);
-				Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)){
-			String sql = "select c.country_id, c.name as country_name , r.name as region_name , c2.name as continent_name\r\n"
-					+ "from countries c \r\n"
-					+ "	join regions r \r\n"
-					+ "		on c.region_id = r.region_id \r\n"
-					+ "	join continents c2 \r\n"
-					+ "		on r.continent_id = c2.continent_id \r\n"
-					+ "order by c.name ;";
-			try(PreparedStatement ps = con.prepareStatement(sql)){
+				Connection con = DriverManager.getConnection(Db.DB_URL, Db.DB_USER, Db.DB_PASSWORD)){
+			System.out.print("Search: ");
+			String userSearch = sc.next();
+			String queryWhereCondition = "where c.name like \"%" + userSearch + "%\"";
+			String query = Db.initialQuery + queryWhereCondition + Db.orderCondition;
+			try(PreparedStatement ps = con.prepareStatement(query)){
 				ResultSet rs = ps.executeQuery();
 				
 				while(rs.next()) {
@@ -39,5 +38,9 @@ public class Main {
 		}catch(SQLException ex) {
 			System.err.println("Error during connection to db");
 		}
+	}
+	
+	public static void main(String[] args) {
+		new Main();
 	}
 }
