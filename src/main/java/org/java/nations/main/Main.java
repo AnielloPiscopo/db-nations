@@ -24,11 +24,11 @@ public class Main {
 	
 	public static String initialQuery = initialSelectQuery + " \r\n" + initialFromQuery + " \r\n" + initialJoinQuery;
 	
-	private Main() {
+	private Main() throws Exception {
 		run();
 	}
 	
-	private void run() {
+	private void run() throws Exception {
 		try(Scanner sc = new Scanner(System.in);
 				Connection con = DriverManager.getConnection(Db.DB_URL, Db.DB_USER, Db.DB_PASSWORD)){
 			System.out.println("Search: ");
@@ -54,6 +54,7 @@ public class Main {
 			
 			System.out.println("Id:");
 			int userId = sc.nextInt();
+			Helper.isNumPositive(userId);
 			initialSelectQuery = "select c.country_id, c.name as country_name , l.`language` as languages \r\n";
 			initialJoinQuery = "join country_languages cl \r\n"
 					+ "		on c.country_id = cl.country_id \r\n"
@@ -106,7 +107,7 @@ public class Main {
 		}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		new Main();
 	}
 }
